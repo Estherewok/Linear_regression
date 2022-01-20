@@ -16,6 +16,48 @@
         <button>
             Add Data
         </button>
+        <style>
+            
+        </style>
     </form>
+    <div>
+        {% if xy%}
+        <h2>
+            Training Data
+        </h2>
+        <table>
+            <tr>
+                <th>
+                    Quantity
+                </th>
+                <th>
+                    Price
+                </th>
+            </tr>
+            {%for Quantity, Price in xy.items%}
+            <tr>
+                <td>
+                    {{Quantity}}
+                </td>
+                <td>
+                    {{Price}}
+                </td>
+            </tr>
+            {%endfor%}
+        </table>
+        <button>
+            <a href="{%url 'ClearData'%}">
+                Clear Data
+            </a>
+        </button>
+        <form method="post" action="{%url 'LinearRegression'%}">
+            {{predict}}
+            {%csrf_token%}
+            <button>
+                Predict Price
+            </button>
+        </form>
+        {%endif%}
+    </div>
 </body>
 </html>
