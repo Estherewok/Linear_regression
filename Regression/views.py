@@ -50,16 +50,21 @@ def ClearData(request):
 
 # Does the price prediction
 import numpy as np
+# Created to handle form submission for price prediction
 def LinearRegression(request):
     if request.method == 'POST':
         form = PredictPrice(request.POST)
         if form.is_valid():
+            # get x_values, y_values and Qty to predict price for 
             Qty = form.cleaned_data['Qty']
             x_values = request.session.get('x_values') or []
             y_values = request.session.get('y_values') or []
 
-            # Predicts 
+            # Gives information for the prediction
             Predicted = predict_price(x_values, y_values, Qty)
+            # predicted returns a single value
+
+            #result shown using httpresponse
             return HttpResponse(Predicted)
 def predict_price(x : list, y : list, new_product : float) -> float:
     """
