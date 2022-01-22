@@ -13,8 +13,10 @@ class Predict_form(forms.Form):
 def Index(request):
     form = Predict_form()
 
-    #   Gets quantity to predict the price
+    #   Gets quantity to predict the price. On form submission, handled by LinearRegression view(function)
     forms = PredictPrice()
+    
+    # Post request that handles adding x_value and y_value to session
     if request.method == 'POST':
         form = Predict_form(request.POST)
         if form.is_valid():
@@ -25,9 +27,11 @@ def Index(request):
             if not request.session.get('x_values'):
                 request.session['x_values'] = []
                 request.session['y_values'] = []
+
             # get x and y values from session
             x_values = request.session['x_values']
             y_values = request.session['y_values']
+
             # add new data to x and y values 
             x_values.append(Quantity)
             y_values.append(Price)
@@ -37,14 +41,17 @@ def Index(request):
             
     x_values = request.session.get('x_values') or []
     y_values = request.session.get('y_values') or []
-    # merge x_values and y_values in a dictionary
+
+    # merge x_values and y_values into a dictionary
     x_y_values = {x_values[idx]: y_values[idx] for idx in range(len(x_values))}
+
     return render(request, 'Regression/index.html', {'form' : form, 'xy' : x_y_values, 'predict' : forms})
 
 def ClearData(request):
     # clears data that the user inserted
     request.session['x_values'] = []
     request.session['y_values'] = []
+
     # redirects/reverse users to the specified page(Index in this case)
     return HttpResponseRedirect(reverse('Index', args = []))
 
@@ -68,7 +75,7 @@ def LinearRegression(request):
             return HttpResponse(Predicted)
 def predict_price(x : list, y : list, new_product : float) -> float:
     """
-    Using Linear regression to predict a new 'y' value giving previous learning data
+    Using Linear regression to predict a new 'y' value given previous learning data
     """
     n = len(x)
     x = np.array(x)
